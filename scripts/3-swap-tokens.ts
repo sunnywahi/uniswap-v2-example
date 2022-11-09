@@ -31,7 +31,7 @@ async function main() {
     console.log("");
     console.log("");
     console.log(`we are swaping AAA 10 tokens with BBB and sending them to ${process.env.WALLET_TWO_ADDRESS}`);
-    let tx = await swapContract.swap(tokenA.address, tokenB.address, ethers.utils.parseUnits("10", 6), process.env.WALLET_TWO_ADDRESS as string, {gasLimit: 200000});
+    let tx = await swapContract.swap(tokenA.address, tokenB.address, ethers.utils.parseUnits("10", 6), process.env.WALLET_TWO_ADDRESS as string, {gasLimit: 3000000});
     await tx.wait();
     console.log("Successfully ", tx.hash);
 }

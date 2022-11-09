@@ -8,18 +8,18 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract UniswapV2 is Ownable {
     //Address is taken from https://docs.uniswap.org/protocol/V2/reference/smart-contracts/router-02#:~:text=Address,was%20built%20from%20commit%206961711.
-    address private constant FACTORY_ADDRESS = 0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f;
-    address private constant ROUTER_ADDRESS = 0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D;
-    //address of WETH token.  This is needed because some times it is better to trade through WETH.
-    //you might get a better price using WETH.
-    //example trading from token A to WETH then WETH to token B might result in a better price
-    address private constant WETH = 0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6;
+    address private factoryAddress;
+    address private routerAddress;
+    address private wethAddress;
 
     event AddLiquidity(address indexed from, uint256 amountA, uint256 amountB, uint256 liquidity);
     event RemoveLiquidity(uint256 amountA, uint256 amountB);
     event SwapTokens(address indexed from, uint256 amountIn, address indexed to);
 
-    constructor(){
+    constructor(address _factoryAddress, address _routerAddress, address _wethAddress){
+        factoryAddress = _factoryAddress;
+        routerAddress= _routerAddress;
+        wethAddress = _wethAddress;
     }
 
     //Adds the liquidity
@@ -27,20 +27,20 @@ contract UniswapV2 is Ownable {
         require(IERC20(_tokenA).transferFrom(msg.sender, address(this), _amountA), "transfer failed for TokenA");
         require(IERC20(_tokenB).transferFrom(msg.sender, address(this), _amountB), "transfer failed for TokenB");
 
-        require(IERC20(_tokenA).approve(address(ROUTER_ADDRESS), _amountA), "approve failed to router for tokenA");
-        require(IERC20(_tokenB).approve(address(ROUTER_ADDRESS), _amountB), "approved failed to router for tokenB");
+        require(IERC20(_tokenA).approve(address(routerAddress), _amountA), "approve failed to router for tokenA");
+        require(IERC20(_tokenB).approve(address(routerAddress), _amountB), "approved failed to router for tokenB");
 
-        (uint amountA, uint amountB, uint liquidity) = IUniswapV2Router02(ROUTER_ADDRESS).addLiquidity(_tokenA, _tokenB, _amountA, _amountB, 1, 1, address(this), block.timestamp);
+        (uint amountA, uint amountB, uint liquidity) = IUniswapV2Router02(routerAddress).addLiquidity(_tokenA, _tokenB, _amountA, _amountB, 1, 1, address(this), block.timestamp);
         emit AddLiquidity(msg.sender, amountA, amountB, liquidity);
     }
 
     //Remove the liquidity
     function removeLiquidity(address _tokenA, address _tokenB) external onlyOwner {
-        address pair = IUniswapV2Factory(FACTORY_ADDRESS).getPair(_tokenA, _tokenB);
+        address pair = IUniswapV2Factory(factoryAddress).getPair(_tokenA, _tokenB);
         uint256 liquidity = IERC20(pair).balanceOf(address(this));
-        IERC20(pair).approve(ROUTER_ADDRESS, liquidity);
+        IERC20(pair).approve(routerAddress, liquidity);
 
-        (uint256 amountA, uint256 amountB) = IUniswapV2Router02(ROUTER_ADDRESS).removeLiquidity(_tokenA, _tokenB, liquidity, 1, 1, address(this), block.timestamp);
+        (uint256 amountA, uint256 amountB) = IUniswapV2Router02(routerAddress).removeLiquidity(_tokenA, _tokenB, liquidity, 1, 1, address(this), block.timestamp);
         emit RemoveLiquidity(amountA, amountB);
     }
 
@@ -60,14 +60,14 @@ contract UniswapV2 is Ownable {
         require(IERC20(_tokenIn).transferFrom(msg.sender, address(this), _amountIn), "transfer failed for the token");
 
         //by calling IERC20 approve you allow the uniswap contract to spend the tokens in this contract
-        require(IERC20(_tokenIn).approve(ROUTER_ADDRESS, _amountIn), "approved failed for router");
+        require(IERC20(_tokenIn).approve(routerAddress, _amountIn), "approved failed for router");
 
         //path is an array of addresses.
         address[] memory path = new address[](2);
         path[0] = _tokenIn;
         path[1] = _tokenOut;
 
-        IUniswapV2Router02(ROUTER_ADDRESS).swapExactTokensForTokens(_amountIn, 1, path, _to, block.timestamp);
+        IUniswapV2Router02(routerAddress).swapExactTokensForTokens(_amountIn, 1, path, _to, block.timestamp);
         emit SwapTokens(msg.sender, _amountIn, _to);
     }
 

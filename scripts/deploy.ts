@@ -5,7 +5,7 @@ const prompt = require("prompt-sync")({sigint: true});
 
 let tokenA: AToken;
 let tokenB: AToken;
-let swap: UniswapV2;
+let uniswapDex: UniswapV2;
 
 async function main() {
   const Token = await ethers.getContractFactory("AToken");
@@ -29,12 +29,31 @@ async function main() {
     return false;
   }
 
+
+  const factoryAddressAnswer = prompt(`${process.env.UNISWAP_V2_FACTORY_ADDRESS} is address of UNISWAP_V2_FACTORY?  (y:n): `);
+  if (factoryAddressAnswer.trim() !== "y") {
+    return false;
+  }
+
+  const routerAddressAnswer = prompt(`${process.env.UNISWAP_V2_ROUTER_ADDRESS} is address of UNISWAP_V2_ROUTER?  (y:n): `);
+  if (routerAddressAnswer.trim() !== "y") {
+    return false;
+  }
+
+  const wethAddressAnswer = prompt(`${process.env.WETH_ADDRESS} is address of WETH_ADDRESS?  (y:n): `);
+  if (wethAddressAnswer.trim() !== "y") {
+    return false;
+  }
+
   console.log(`===> Deploying Swap contract`);
   const UniswapV2 = await ethers.getContractFactory("UniswapV2");
-  swap = (await UniswapV2.deploy()) as UniswapV2;
-  await swap.deployed();
-  console.log(`our uniswap contract deployed ${swap.address}`);
+  uniswapDex = (await UniswapV2.deploy(ethers.utils.getAddress(process.env.UNISWAP_V2_FACTORY_ADDRESS as string),
+          ethers.utils.getAddress(process.env.UNISWAP_V2_ROUTER_ADDRESS as string),
+          ethers.utils.getAddress(process.env.WETH_ADDRESS as string))) as UniswapV2;
+  await uniswapDex.deployed();
+  console.log(`our uniswap contract deployed ${uniswapDex.address}`);
 
+  //Also create the pair for Token A and Token B
 }
 
 // We recommend this pattern to be able to use async/await everywhere

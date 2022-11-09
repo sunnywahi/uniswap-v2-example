@@ -23,6 +23,13 @@ WALLET_ONE_ADDRESS=
 WALLET_TWO_ADDRESS=
 ```
 
+#### Addresses on Goerli for Uniswapv2
+
+```solidity
+address private constant FACTORY_ADDRESS = 0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f;
+address private constant ROUTER_ADDRESS = 0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D;
+```
+
 ```shell
 npx hardhat help
 npx hardhat test

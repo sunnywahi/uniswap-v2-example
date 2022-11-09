@@ -5,10 +5,14 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "deploy": "npx hardhat run ./scripts/deploy.ts --network goerli",
-    "mint": "npx hardhat run ./scripts/1-mint-tokens.ts --network goerli",
-    "add-liquidity": "npx hardhat run ./scripts/2-add-liquidity.ts --network goerli",
-    "swap-tokens": "npx hardhat run ./scripts/3-swap-tokens.ts --network goerli"
+    "deploy-local": "npx hardhat run ./scripts/deploy.ts --network localhost",
+    "mint-local": "npx hardhat run ./scripts/1-mint-tokens.ts --network localhost",
+    "add-liquidity-local": "npx hardhat run ./scripts/2-add-liquidity.ts --network localhost",
+    "swap-tokens-local": "npx hardhat run ./scripts/3-swap-tokens.ts --network localhost",
+    "deploy-goerli": "npx hardhat run ./scripts/deploy.ts --network goerli",
+    "mint-goerli": "npx hardhat run ./scripts/1-mint-tokens.ts --network goerli",
+    "add-liquidity-goerli": "npx hardhat run ./scripts/2-add-liquidity.ts --network goerli",
+    "swap-tokens-goerli": "npx hardhat run ./scripts/3-swap-tokens.ts --network goerli"
   },
   "repository": {
     "type": "git",

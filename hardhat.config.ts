@@ -25,6 +25,7 @@ const config: HardhatUserConfig = {
     },
     localhost: {
       chainId: 1337,
+      url: "http://127.0.0.1:8545/",
     },
     goerli: {
       url: process.env.GOERLI_URL || "https://eth-goerli.g.alchemy.com/v2/pEV6o9q1MlwEFKO-ksD3gTtm1P-_2Cu7",
